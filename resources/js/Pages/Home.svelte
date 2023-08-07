@@ -1,3 +1,5 @@
 <script>
+    import Layout from '@/Shared/Layout.svelte';
 </script>
-<h1>Hello Pransli crud</h1>
+<Layout>
+</Layout>
