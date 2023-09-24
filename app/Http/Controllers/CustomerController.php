@@ -17,7 +17,8 @@ class CustomerController extends Controller
     public function index()
     {
         //$customers=Customer::get(['id','name','email','phoneno']);
-        $customers=Customer::paginate(3)
+        //dd("Entering store method");
+        $customers=Customer::paginate(5)
                         ->through(function($customer){
                             return[
                                 'id'=>$customer->id,
@@ -36,7 +37,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+          return Inertia::render('CreateCustomer');
     }
 
     /**
@@ -47,7 +48,18 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        //
+        //dd("Entering store method");
+        $validatedData = $request->validated();
+        //echo "This is a custom message.\n";
+        //$imagePath = $request->file('image')->store('images', 'public');
+        $customer = new Customer;
+        $customer->name=$validatedData['name'];
+        $customer->email=$validatedData['email'];
+        $customer->phoneno=$validatedData['phoneno'];
+        $customer->image_path= "C:\fakepath\Bha.jpeg"; 
+        //echo($customer);
+        $customer->save();
+        return redirect('/customers')->with('success',"customers Created Successfully");
     }
 
     /**
@@ -58,7 +70,7 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        //
+       
     }
 
     /**
@@ -67,11 +79,13 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function edit(Customer $customer)
+    public function edit(Customer $id)
     {
-        //
+        $custom = Customer::find($id);
+        return Inertia::render('EditCustomer',['cust'=>$custom]);
+        //return $customer;
     }
-
+ 
     /**
      * Update the specified resource in storage.
      *
@@ -79,9 +93,16 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
+    public function update(UpdateCustomerRequest $request, int $id)
     {
-        //
+        $customer = Customer::findOrFail($id);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email,' . $customer->id,
+
+        ]);
+        $customer->update($validatedData);
+        return redirect('/customers')->with('success',"customers Updated Successfully");    
     }
 
     /**
@@ -90,8 +111,33 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy(int $id)
     {
-        //
+        $customer = Customer::findOrFail($id);
+        //$customer->forceDelete();
+        if ($customer) {
+            $customer->Login()->update(['customer_id' => null]);
+            $customer->forceDelete();
+        }
+        return redirect('/');
+    }
+
+    public function trash(int $id)
+    {
+        $customer = Customer::findOrFail($id);
+        $customer->delete();
+        return redirect('/');
+    }
+
+    public function deleted()
+    {
+        $records = Customer::onlyTrashed()->get();
+        return Inertia::render('CustomersTrash',['customs'=>$records]);        
+    }
+    public function restorep(int $id)
+    {
+        $record = Customer::withTrashed()->find($id);
+        $record->restore();
+        return redirect('/customers');
     }
 }

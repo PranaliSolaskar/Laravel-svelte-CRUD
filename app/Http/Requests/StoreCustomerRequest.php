@@ -13,7 +13,7 @@ class StoreCustomerRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,10 +21,13 @@ class StoreCustomerRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules():array
     {
         return [
-            //
+            'name'=>'required|max:255',
+            'email'=>'required|unique:customers|email',
+            'phoneno'=>'',
+            'image'=>'image'
         ];
     }
-}
+}   

@@ -14,7 +14,10 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@inertiajs/inertia": "^0.11.1",
+        "@inertiajs/inertia-svelte": "^0.8.0",
         "@inertiajs/svelte": "^1.0.9",
-        "bootstrap": "^5.3.1"
+        "bootstrap": "^5.3.1",
+        "svelte": "^4.2.0"
     }
 }

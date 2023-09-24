@@ -1,10 +1,14 @@
 <script>
+    import {inertia} from'@inertiajs/svelte' 
     import Layout from '@/Shared/Layout.svelte';
     export let customers;
     import Pagination from '@/Shared/Pagination.svelte';
 </script>
 
 <Layout>
+    <a use:inertia class="btn btn-primary btn-sm" href="customers/create">Add Student</a>
+    <a use:inertia class="btn btn-primary btn-sm" href="customers/onlytrash">Deleted Student</a>
+    
     <table class="table">
         <thead>
             <tr>
@@ -23,8 +27,9 @@
             <td>{customer.phoneno}</td>
             <td>
                 <button class="btn btn-info">View</button>
-                <button class="btn btn-primary">Edit</button>
-                <button class="btn btn-danger">Delete</button>
+                <a use:inertia href="/customers/{customer.id}/edit" class="btn btn-primary">Edit</a>
+                <a use:inertia href="/customers/{customer.id}/delete" class="btn btn-danger">Delete</a>
+                <a use:inertia href="/customers/{customer.id}/trash" class="btn btn-danger">Trash</a>
             </td>
             </tr>
             {/each}
